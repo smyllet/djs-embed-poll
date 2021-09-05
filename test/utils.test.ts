@@ -1,5 +1,5 @@
 const assert = require('assert')
-const Utils = require('../src/Utils')
+import Utils from '../src/Utils';
 
 describe('Class Utils', () => {
     describe('generateEmotePercentBar()', () => {

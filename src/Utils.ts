@@ -1,7 +1,5 @@
-class Utils {
-    /** @param {int} percent
-     *  @return {string} percent */
-    static generateEmotePercentBar(percent) {
+export default class Utils {
+    static generateEmotePercentBar(percent: number): string {
         let result = ""
 
         for(let i = 1; i <= 10; i++) {
@@ -12,5 +10,3 @@ class Utils {
         return result
     }
 }
-
-module.exports = Utils

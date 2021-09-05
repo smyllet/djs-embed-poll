@@ -1,9 +1,9 @@
 const assert = require('assert')
-const SondageOption = require('../src/SondageOption')
+import SondageOption from '../src/SondageOption'
 
 describe('Class SondageOption', () => {
-    /** @type {SondageOption} */
-    let option1, option2
+    let option1: SondageOption
+    let option2: SondageOption
 
     beforeEach(function(){
         option1 = new SondageOption(':sob:', 'Choix 1')
