@@ -1,39 +1,41 @@
 export default class SondageOption {
-    private readonly emote: string
-    private readonly libelle: string
-    private nbVote: number
+    private readonly _emote: string
+    private readonly _libelle: string
+    private readonly _multiOptions: boolean
+    private _votes: Array<string>
 
-    constructor(emote: string, libelle: string) {
-        this.emote = emote
-        this.libelle = libelle
-        this.nbVote = 0
+    constructor(emote: string, libelle: string, multiOption = false) {
+        this._emote = emote
+        this._libelle = libelle
+        this._votes = []
+        this._multiOptions = multiOption
     }
 
-    getEmote(): string {
-        return this.emote
+    get emote(): string {
+        return this._emote
     }
 
-    getLibelle(): string {
-        return this.libelle
+    get libelle(): string {
+        return this._libelle
     }
 
-    setNbVote(nbVote: number): void {
-        this.nbVote = nbVote
+    get multiOptions(): boolean {
+        return this._multiOptions
     }
 
-    getNbVote(): number {
-        return this.nbVote
+    addVote(memberId: string): void {
+        if(this._votes.indexOf(memberId) === -1) this._votes.push(memberId)
     }
 
-    up(): void {
-        this.nbVote++
+    removeVote(memberId: string): void {
+        if(this._votes.indexOf(memberId) !== -1) this._votes.splice(this._votes.indexOf(memberId), 1)
     }
 
-    down(): void {
-        if(this.nbVote > 0) this.nbVote--
+    resetVote(): void {
+        this._votes = []
     }
 
-    reset(): void {
-        this.nbVote = 0
+    get nbVote(): number {
+        return this._votes.length
     }
 }

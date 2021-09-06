@@ -7,76 +7,95 @@ describe('Class SondageOption', () => {
 
     beforeEach(function(){
         option1 = new SondageOption(':sob:', 'Choix 1')
-        option2 = new SondageOption(':cry:', 'Choix 2')
+        option2 = new SondageOption(':cry:', 'Choix 2', true)
 
-        option2.setNbVote(5)
+        option2.addVote("001")
+        option2.addVote("002")
+        option2.addVote("003")
+        option2.addVote("004")
+        option2.addVote("005")
     });
 
-    describe('up()', () => {
+    describe('addVote()', () => {
         it('Add 1 vote from an option', () => {
-            option1.up()
-            assert.strictEqual(option1.getNbVote(), 1)
+            option1.addVote("001")
+            assert.strictEqual(option1.nbVote, 1)
         })
 
-        it('Add 2x 1 vote from an option', () => {
-            option1.up()
-            option1.up()
-            assert.strictEqual(option1.getNbVote(), 2)
+        it('Add 2 votes from an option', () => {
+            option1.addVote("001")
+            option1.addVote("002")
+            assert.strictEqual(option1.nbVote, 2)
         })
 
-        it('Add 1 vote from an option that has already 5 votes', () => {
-            option2.up()
-            assert.strictEqual(option2.getNbVote(), 6)
+        it('Add 1 already existe vote from an option', () => {
+            option2.addVote("001")
+            assert.strictEqual(option2.nbVote, 5)
         })
     })
 
-    describe('down()', () => {
+    describe('removeVote()', () => {
         it('Remove 1 vote from an option that has no votes', () => {
-            option1.down()
-            assert.strictEqual(option1.getNbVote(), 0)
+            option1.removeVote("001")
+            assert.strictEqual(option1.nbVote, 0)
         })
 
         it('Remove 1 vote from an option', () => {
-            option2.down()
-            assert.strictEqual(option2.getNbVote(), 4)
+            option2.removeVote("001")
+            assert.strictEqual(option2.nbVote, 4)
         })
 
-        it('Remove 2x 1 vote from an option', () => {
-            option2.down()
-            option2.down()
-            assert.strictEqual(option2.getNbVote(), 3)
+        it('Remove 2 vote from an option', () => {
+            option2.removeVote("002")
+            option2.removeVote("003")
+            assert.strictEqual(option2.nbVote, 3)
+        })
+
+        it('Remove no existing vote from an option', () => {
+            option2.removeVote("006")
+            assert.strictEqual(option2.nbVote, 5)
         })
     })
 
-    describe('reset()', () => {
+    describe('resetVote()', () => {
         it('Remove all votes from an option that has already 0 vote', () => {
-            option1.reset()
-            assert.strictEqual(option1.getNbVote(), 0)
+            option1.resetVote()
+            assert.strictEqual(option1.nbVote, 0)
         })
 
         it('Remove all votes from an option', () => {
-            option2.reset()
-            assert.strictEqual(option2.getNbVote(), 0)
+            option2.resetVote()
+            assert.strictEqual(option2.nbVote, 0)
         })
     })
 
-    describe('getEmote', () => {
+    describe('get emote', () => {
         it('Get emote from an option', () => {
-            assert.strictEqual(option1.getEmote(), ":sob:")
+            assert.strictEqual(option1.emote, ":sob:")
         })
 
         it('Get emote from an other option', () => {
-            assert.strictEqual(option2.getEmote(), ":cry:")
+            assert.strictEqual(option2.emote, ":cry:")
         })
     })
 
-    describe('getLibelle', () => {
+    describe('get libelle', () => {
         it('Get libelle from an option', () => {
-            assert.strictEqual(option1.getLibelle(), "Choix 1")
+            assert.strictEqual(option1.libelle, "Choix 1")
         })
 
         it('Get libelle from an other option', () => {
-            assert.strictEqual(option2.getLibelle(), "Choix 2")
+            assert.strictEqual(option2.libelle, "Choix 2")
+        })
+    })
+
+    describe('get multiOptions', () => {
+        it('Get multiOptions from an option', () => {
+            assert.strictEqual(option1.multiOptions, false)
+        })
+
+        it('Get multiOptions from an other option', () => {
+            assert.strictEqual(option2.multiOptions, true)
         })
     })
 })
