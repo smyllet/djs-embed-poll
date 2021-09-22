@@ -9,4 +9,9 @@ export default class Utils {
 
         return result
     }
+
+    static calculRoundPercent(part: number, total: number) : number {
+        if(total < 1) return 0
+        else return Math.round(part/total*100)
+    }
 }

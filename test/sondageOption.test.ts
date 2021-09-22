@@ -19,53 +19,53 @@ describe('Class SondageOption', () => {
     describe('addVote()', () => {
         it('Add 1 vote from an option', () => {
             option1.addVote("001")
-            assert.strictEqual(option1.nbVote, 1)
+            assert.strictEqual(option1.nbVotes, 1)
         })
 
         it('Add 2 votes from an option', () => {
             option1.addVote("001")
             option1.addVote("002")
-            assert.strictEqual(option1.nbVote, 2)
+            assert.strictEqual(option1.nbVotes, 2)
         })
 
         it('Add 1 already existe vote from an option', () => {
             option2.addVote("001")
-            assert.strictEqual(option2.nbVote, 5)
+            assert.strictEqual(option2.nbVotes, 5)
         })
     })
 
     describe('removeVote()', () => {
         it('Remove 1 vote from an option that has no votes', () => {
             option1.removeVote("001")
-            assert.strictEqual(option1.nbVote, 0)
+            assert.strictEqual(option1.nbVotes, 0)
         })
 
         it('Remove 1 vote from an option', () => {
             option2.removeVote("001")
-            assert.strictEqual(option2.nbVote, 4)
+            assert.strictEqual(option2.nbVotes, 4)
         })
 
         it('Remove 2 vote from an option', () => {
             option2.removeVote("002")
             option2.removeVote("003")
-            assert.strictEqual(option2.nbVote, 3)
+            assert.strictEqual(option2.nbVotes, 3)
         })
 
         it('Remove no existing vote from an option', () => {
             option2.removeVote("006")
-            assert.strictEqual(option2.nbVote, 5)
+            assert.strictEqual(option2.nbVotes, 5)
         })
     })
 
     describe('resetVote()', () => {
         it('Remove all votes from an option that has already 0 vote', () => {
             option1.resetVote()
-            assert.strictEqual(option1.nbVote, 0)
+            assert.strictEqual(option1.nbVotes, 0)
         })
 
         it('Remove all votes from an option', () => {
             option2.resetVote()
-            assert.strictEqual(option2.nbVote, 0)
+            assert.strictEqual(option2.nbVotes, 0)
         })
     })
 

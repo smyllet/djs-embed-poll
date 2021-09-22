@@ -35,7 +35,19 @@ export default class SondageOption {
         this._votes = []
     }
 
-    get nbVote(): number {
+    get votes() : Array<string> {
+        return this._votes
+    }
+
+    get nbVotes(): number {
         return this._votes.length
+    }
+
+    toJson() {
+        return {
+            emote: this._emote,
+            libelle: this._libelle,
+            multiOptions: this._multiOptions
+        }
     }
 }
