@@ -16,6 +16,9 @@ const fs = require("fs");
 let _sondagesList = [];
 let _client;
 let _pathToSondageSaveFile;
+/** Initialise Sondage Management
+ *  @param {Client} client
+ *  @param {string} pathToSondageSaveFile */
 function init(client, pathToSondageSaveFile) {
     return __awaiter(this, void 0, void 0, function* () {
         yield new Promise((resolve, reject) => {
@@ -64,6 +67,7 @@ function init(client, pathToSondageSaveFile) {
         }));
     });
 }
+/** Save all sondage in sondage data file */
 function writeSondagesInFiles() {
     return __awaiter(this, void 0, void 0, function* () {
         let data = {
@@ -77,6 +81,7 @@ function writeSondagesInFiles() {
         }
     });
 }
+/** Load all sondage from sondage data file */
 function loadSondagesFromFile() {
     return __awaiter(this, void 0, void 0, function* () {
         _sondagesList = [];
@@ -129,6 +134,9 @@ function loadSondagesFromFile() {
         }
     });
 }
+/** post in channel and save a sondage
+ *  @param {Sondage} sondage
+ *  @param {TextChannel} channel */
 function postSondage(sondage, channel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (_client) {
@@ -145,12 +153,16 @@ function postSondage(sondage, channel) {
             throw Error("Not initialized");
     });
 }
+/** get a sondage through the message it is associated with
+ *  @param {Message|PartialMessage} message */
 function getSondageByMessage(message) {
     if (_client)
         return _sondagesList.find(sondage => sondage.message.id === message.id);
     else
         throw Error("Not initialized");
 }
+/** Remove sondage from storage (WARNING : sondage does not end)
+ *  @param {Sondage} sondage */
 function removeSondageInStorage(sondage) {
     if (_sondagesList.includes(sondage)) {
         _sondagesList.splice(_sondagesList.indexOf(sondage), 1);

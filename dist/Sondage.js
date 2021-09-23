@@ -13,6 +13,10 @@ const discord_js_1 = require("discord.js");
 const Utils_1 = require("./Utils");
 const SondageManager = require("./index");
 class Sondage {
+    /** @param {string} title
+     *  @param {string} description
+     *  @param {Array<SondageOption>} options
+     *  @param {number} expireTime */
     constructor(title, description = "", options, expireTime) {
         this._title = title;
         this._description = description;
@@ -25,41 +29,53 @@ class Sondage {
             this._expireTime = date.getTime();
         }
     }
+    /** @param {string} title */
     set title(title) {
         this._title = title;
     }
+    /** @return {string} */
     get title() {
         return this._title;
     }
+    /** @param {string} description */
     set description(description) {
         this._description = description;
     }
+    /** @return {string} */
     get description() {
         return this._description;
     }
+    /** @param {SondageOption} option */
     addOption(option) {
         if (this._options.indexOf(option) === -1)
             this._options.push(option);
     }
+    /** @param {SondageOption} option */
     removeOption(option) {
         if (this._options.indexOf(option) !== -1)
             this._options.splice(this._options.indexOf(option), 1);
     }
+    /** @return {Array<SondageOption>} */
     get options() {
         return this._options;
     }
+    /** @param {string} emote
+     *  @return {SondageOption} */
     getOptionByEmote(emote) {
         return this._options.find(option => option.emote === emote);
     }
     resetAllVotes() {
         return this._options.forEach(option => option.resetVote());
     }
+    /** @return {Array<string>} */
     get reacts() {
         return this._options.map(option => option.emote);
     }
+    /** @param {Message} message */
     set message(message) {
         this._message = message;
     }
+    /** @return {Message} */
     get message() {
         return this._message;
     }
@@ -73,6 +89,7 @@ class Sondage {
             }
         });
     }
+    /** @return {number} */
     get nbVotes() {
         let votes = [];
         this._options.forEach(option => {
@@ -83,10 +100,12 @@ class Sondage {
         });
         return votes.length;
     }
+    /** @return {boolean} */
     get expired() {
         let now = new Date();
         return (this._expireTime - now.getTime()) < 1;
     }
+    /** @return {MessageEmbed} */
     get embed() {
         let embed = new discord_js_1.MessageEmbed();
         let multiple = false;
@@ -134,6 +153,8 @@ class Sondage {
             expireTime: this._expireTime
         };
     }
+    /** @param {string} memberId
+     *  @param {string} emote */
     vote(memberId, emote) {
         return __awaiter(this, void 0, void 0, function* () {
             let option = this.getOptionByEmote(emote);
@@ -155,6 +176,8 @@ class Sondage {
             }
         });
     }
+    /** @param {string} memberId
+     *  @param {string} emote */
     unVote(memberId, emote) {
         let option = this.getOptionByEmote(emote);
         if (option) {
@@ -192,6 +215,7 @@ class Sondage {
             }, this._expireTime - now.getTime());
         }
     }
+    /** @param {number} expireTime */
     set expireTime(expireTime) {
         this._expireTime = expireTime;
         this.setTimeout();

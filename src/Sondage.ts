@@ -11,6 +11,10 @@ export default class Sondage {
     private _expireTimeout: NodeJS.Timeout
     private _message : Message
 
+    /** @param {string} title
+     *  @param {string} description
+     *  @param {Array<SondageOption>} options
+     *  @param {number} expireTime */
     constructor(title: string, description = "", options?: Array<SondageOption>, expireTime?: number) {
         this._title = title
         this._description = description
@@ -24,34 +28,43 @@ export default class Sondage {
         }
     }
 
+    /** @param {string} title */
     set title(title: string) {
         this._title = title
     }
 
+    /** @return {string} */
     get title(): string {
         return this._title
     }
 
+    /** @param {string} description */
     set description(description: string) {
         this._description = description
     }
 
+    /** @return {string} */
     get description(): string {
         return this._description
     }
 
+    /** @param {SondageOption} option */
     addOption(option: SondageOption) {
         if(this._options.indexOf(option) === -1) this._options.push(option)
     }
 
-    removeOption(option) {
+    /** @param {SondageOption} option */
+    removeOption(option: SondageOption) {
         if(this._options.indexOf(option) !== -1) this._options.splice(this._options.indexOf(option), 1)
     }
 
+    /** @return {Array<SondageOption>} */
     get options(): Array<SondageOption> {
         return this._options;
     }
 
+    /** @param {string} emote
+     *  @return {SondageOption} */
     getOptionByEmote(emote: string): SondageOption {
         return this._options.find(option => option.emote === emote)
     }
@@ -60,14 +73,17 @@ export default class Sondage {
         return this._options.forEach(option => option.resetVote())
     }
 
+    /** @return {Array<string>} */
     get reacts(): Array<string> {
         return this._options.map(option => option.emote)
     }
 
+    /** @param {Message} message */
     set message(message: Message) {
         this._message = message
     }
 
+    /** @return {Message} */
     get message(): Message {
         return this._message
     }
@@ -81,6 +97,7 @@ export default class Sondage {
         }
     }
 
+    /** @return {number} */
     get nbVotes(): number {
         let votes: Array<string> = []
 
@@ -93,12 +110,14 @@ export default class Sondage {
         return votes.length
     }
 
+    /** @return {boolean} */
     get expired() : boolean {
         let now = new Date()
 
         return (this._expireTime - now.getTime()) < 1
     }
 
+    /** @return {MessageEmbed} */
     get embed(): MessageEmbed {
         let embed = new MessageEmbed()
         let multiple = false
@@ -150,6 +169,8 @@ export default class Sondage {
         }
     }
 
+    /** @param {string} memberId
+     *  @param {string} emote */
     async vote(memberId: string, emote: string) {
         let option = this.getOptionByEmote(emote)
 
@@ -173,6 +194,8 @@ export default class Sondage {
         }
     }
 
+    /** @param {string} memberId
+     *  @param {string} emote */
     unVote(memberId: string, emote: string) {
         let option = this.getOptionByEmote(emote)
 
@@ -213,6 +236,7 @@ export default class Sondage {
         }
     }
 
+    /** @param {number} expireTime */
     set expireTime(expireTime: number) {
         this._expireTime = expireTime
         this.setTimeout()
