@@ -104,12 +104,13 @@ export default class Sondage {
         let multiple = false
 
         embed.setTitle(this._title)
+        if(this.description && this.description.length > 0) embed.setDescription(this.description)
 
         this._options.forEach(option => {
             let nbVoteOfOption = option.nbVotes
             let percent = Utils.calculRoundPercent(nbVoteOfOption, this.nbVotes)
 
-            embed.addField(`${option.emote} ${option.libelle} ${(option.multiOptions) ? ' (*)' : ''}`, `${Utils.generateEmotePercentBar(percent)} (${nbVoteOfOption}/${this.nbVotes})`)
+            embed.addField(`${option.emote} ${option.libelle} ${(option.multiOptions) ? ' (*)' : ''}`, `${Utils.generateEmotePercentBar(percent)} ${percent}% (${nbVoteOfOption}/${this.nbVotes})`)
 
             if(option.multiOptions) multiple = true
         })

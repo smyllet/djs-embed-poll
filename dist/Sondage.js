@@ -91,10 +91,12 @@ class Sondage {
         let embed = new discord_js_1.MessageEmbed();
         let multiple = false;
         embed.setTitle(this._title);
+        if (this.description && this.description.length > 0)
+            embed.setDescription(this.description);
         this._options.forEach(option => {
             let nbVoteOfOption = option.nbVotes;
             let percent = Utils_1.default.calculRoundPercent(nbVoteOfOption, this.nbVotes);
-            embed.addField(`${option.emote} ${option.libelle} ${(option.multiOptions) ? ' (*)' : ''}`, `${Utils_1.default.generateEmotePercentBar(percent)} (${nbVoteOfOption}/${this.nbVotes})`);
+            embed.addField(`${option.emote} ${option.libelle} ${(option.multiOptions) ? ' (*)' : ''}`, `${Utils_1.default.generateEmotePercentBar(percent)} ${percent}% (${nbVoteOfOption}/${this.nbVotes})`);
             if (option.multiOptions)
                 multiple = true;
         });
