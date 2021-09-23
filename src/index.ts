@@ -7,10 +7,7 @@ let _sondagesList: Array<Sondage> = []
 let _client: Client
 let _pathToSondageSaveFile: string
 
-/** Initialise Sondage Management
- *  @param {Client} client
- *  @param {string} pathToSondageSaveFile */
-async function init(client: Client, pathToSondageSaveFile: string) {
+export async function init(client: Client, pathToSondageSaveFile: string) {
     await new Promise<void>((resolve, reject) => {
         if(client.isReady()) resolve()
 
@@ -63,8 +60,7 @@ async function init(client: Client, pathToSondageSaveFile: string) {
     })
 }
 
-/** Save all sondage in sondage data file */
-async function writeSondagesInFiles() {
+export async function writeSondagesInFiles() {
     let data = {
         sondageList: _sondagesList.map(sondage => sondage.toJson())
     }
@@ -76,8 +72,7 @@ async function writeSondagesInFiles() {
     }
 }
 
-/** Load all sondage from sondage data file */
-async function loadSondagesFromFile() {
+export async function loadSondagesFromFile() {
     _sondagesList = []
 
     if(fs.existsSync(_pathToSondageSaveFile)) {
@@ -135,10 +130,7 @@ async function loadSondagesFromFile() {
     }
 }
 
-/** post in channel and save a sondage
- *  @param {Sondage} sondage
- *  @param {TextChannel} channel */
-async function postSondage(sondage: Sondage, channel: TextChannel): Promise<Message> {
+export async function postSondage(sondage: Sondage, channel: TextChannel): Promise<Message> {
     if(_client) {
         let message = await channel.send({embeds: [sondage.embed]})
         message = await channel.messages.fetch(message.id)
@@ -151,21 +143,19 @@ async function postSondage(sondage: Sondage, channel: TextChannel): Promise<Mess
     } else throw Error("Not initialized")
 }
 
-/** get a sondage through the message it is associated with
- *  @param {Message|PartialMessage} message */
-function getSondageByMessage(message: Message|PartialMessage): Sondage {
+export function getSondageByMessage(message: Message|PartialMessage): Sondage {
     if(_client) return _sondagesList.find(sondage => sondage.message.id === message.id)
     else throw Error("Not initialized")
 }
 
-/** Remove sondage from storage (WARNING : sondage does not end)
- *  @param {Sondage} sondage */
 export function removeSondageInStorage(sondage: Sondage) {
     if(_sondagesList.includes(sondage)) {
         _sondagesList.splice(_sondagesList.indexOf(sondage), 1)
         writeSondagesInFiles().catch(() => {})
     }
 }
+
+export {Sondage, SondageOption}
 
 module.exports = {
     // Class

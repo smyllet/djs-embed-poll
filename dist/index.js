@@ -9,16 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeSondageInStorage = void 0;
+exports.SondageOption = exports.Sondage = exports.removeSondageInStorage = exports.getSondageByMessage = exports.postSondage = exports.loadSondagesFromFile = exports.writeSondagesInFiles = exports.init = void 0;
 const Sondage_1 = require("./Sondage");
+exports.Sondage = Sondage_1.default;
 const SondageOption_1 = require("./SondageOption");
+exports.SondageOption = SondageOption_1.default;
 const fs = require("fs");
 let _sondagesList = [];
 let _client;
 let _pathToSondageSaveFile;
-/** Initialise Sondage Management
- *  @param {Client} client
- *  @param {string} pathToSondageSaveFile */
 function init(client, pathToSondageSaveFile) {
     return __awaiter(this, void 0, void 0, function* () {
         yield new Promise((resolve, reject) => {
@@ -67,7 +66,7 @@ function init(client, pathToSondageSaveFile) {
         }));
     });
 }
-/** Save all sondage in sondage data file */
+exports.init = init;
 function writeSondagesInFiles() {
     return __awaiter(this, void 0, void 0, function* () {
         let data = {
@@ -81,7 +80,7 @@ function writeSondagesInFiles() {
         }
     });
 }
-/** Load all sondage from sondage data file */
+exports.writeSondagesInFiles = writeSondagesInFiles;
 function loadSondagesFromFile() {
     return __awaiter(this, void 0, void 0, function* () {
         _sondagesList = [];
@@ -134,9 +133,7 @@ function loadSondagesFromFile() {
         }
     });
 }
-/** post in channel and save a sondage
- *  @param {Sondage} sondage
- *  @param {TextChannel} channel */
+exports.loadSondagesFromFile = loadSondagesFromFile;
 function postSondage(sondage, channel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (_client) {
@@ -153,16 +150,14 @@ function postSondage(sondage, channel) {
             throw Error("Not initialized");
     });
 }
-/** get a sondage through the message it is associated with
- *  @param {Message|PartialMessage} message */
+exports.postSondage = postSondage;
 function getSondageByMessage(message) {
     if (_client)
         return _sondagesList.find(sondage => sondage.message.id === message.id);
     else
         throw Error("Not initialized");
 }
-/** Remove sondage from storage (WARNING : sondage does not end)
- *  @param {Sondage} sondage */
+exports.getSondageByMessage = getSondageByMessage;
 function removeSondageInStorage(sondage) {
     if (_sondagesList.includes(sondage)) {
         _sondagesList.splice(_sondagesList.indexOf(sondage), 1);
@@ -171,10 +166,8 @@ function removeSondageInStorage(sondage) {
 }
 exports.removeSondageInStorage = removeSondageInStorage;
 module.exports = {
-    // Class
     Sondage: Sondage_1.default,
     SondageOption: SondageOption_1.default,
-    // Function
     postSondage: postSondage,
     getSondageByMessage: getSondageByMessage,
     init: init

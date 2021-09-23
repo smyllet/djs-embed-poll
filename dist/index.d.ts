@@ -1,0 +1,10 @@
+import Sondage from './Sondage';
+import SondageOption from "./SondageOption";
+import { TextChannel, Message, Client, PartialMessage } from "discord.js";
+export declare function init(client: Client, pathToSondageSaveFile: string): Promise<void>;
+export declare function writeSondagesInFiles(): Promise<void>;
+export declare function loadSondagesFromFile(): Promise<void>;
+export declare function postSondage(sondage: Sondage, channel: TextChannel): Promise<Message>;
+export declare function getSondageByMessage(message: Message | PartialMessage): Sondage;
+export declare function removeSondageInStorage(sondage: Sondage): void;
+export { Sondage, SondageOption };

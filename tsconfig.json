@@ -2,7 +2,9 @@
   "compilerOptions": {
     "module": "CommonJS",
     "outDir": "dist",
-    "target": "es6"
+    "target": "es6",
+    "declaration": true,
+    "removeComments": true,
   },
   "include": [
     "src/**/*"
