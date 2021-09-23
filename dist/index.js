@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.removeSondageInStorage = void 0;
 const Sondage_1 = require("./Sondage");
 const SondageOption_1 = require("./SondageOption");
-const discord_js_1 = require("discord.js");
 const fs = require("fs");
 let _sondagesList = [];
 let _client;
@@ -32,41 +31,35 @@ function init(client, pathToSondageSaveFile) {
         });
         _client = client;
         _pathToSondageSaveFile = pathToSondageSaveFile;
-        yield loadSondagesFromFile().catch((e) => {
+        yield loadSondagesFromFile().then(() => {
+            writeSondagesInFiles();
+        }).catch((e) => {
             throw Error(e.message);
         });
         client.on('messageReactionAdd', (messageReaction, user) => {
-            if (messageReaction.message instanceof discord_js_1.Message) {
-                let sondage = getSondageByMessage(messageReaction.message);
-                if (sondage && !user.bot) {
-                    sondage.vote(user.id, messageReaction.emoji.name);
-                    sondage.updateMessageAndReact();
-                }
+            let sondage = getSondageByMessage(messageReaction.message);
+            if (sondage && !user.bot) {
+                sondage.vote(user.id, messageReaction.emoji.name);
+                sondage.updateMessageAndReact();
             }
         });
         client.on('messageReactionRemove', (messageReaction, user) => {
-            if (messageReaction.message instanceof discord_js_1.Message) {
-                let sondage = getSondageByMessage(messageReaction.message);
-                if (sondage && !user.bot) {
-                    sondage.unVote(user.id, messageReaction.emoji.name);
-                    sondage.updateMessageAndReact();
-                }
+            let sondage = getSondageByMessage(messageReaction.message);
+            if (sondage && !user.bot) {
+                sondage.unVote(user.id, messageReaction.emoji.name);
+                sondage.updateMessageAndReact();
             }
         });
         client.on('messageReactionRemoveAll', (message) => __awaiter(this, void 0, void 0, function* () {
-            if (message instanceof discord_js_1.Message) {
-                let sondage = getSondageByMessage(message);
-                if (sondage) {
-                    yield sondage.updateMessageAndReact();
-                }
+            let sondage = getSondageByMessage(message);
+            if (sondage) {
+                yield sondage.updateMessageAndReact();
             }
         }));
         client.on('messageDelete', (message) => __awaiter(this, void 0, void 0, function* () {
-            if (message instanceof discord_js_1.Message) {
-                let sondage = getSondageByMessage(message);
-                if (sondage) {
-                    yield removeSondageInStorage(sondage);
-                }
+            let sondage = getSondageByMessage(message);
+            if (sondage) {
+                yield removeSondageInStorage(sondage);
             }
         }));
     });
@@ -140,6 +133,7 @@ function postSondage(sondage, channel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (_client) {
             let message = yield channel.send({ embeds: [sondage.embed] });
+            message = yield channel.messages.fetch(message.id);
             _sondagesList.push(sondage);
             sondage.message = message;
             yield sondage.regenerateReact();
@@ -153,12 +147,12 @@ function postSondage(sondage, channel) {
 }
 function getSondageByMessage(message) {
     if (_client)
-        return _sondagesList.find(sondage => sondage.message === message);
+        return _sondagesList.find(sondage => sondage.message.id === message.id);
     else
         throw Error("Not initialized");
 }
 function removeSondageInStorage(sondage) {
-    if (_sondagesList.indexOf(sondage) !== -1) {
+    if (_sondagesList.includes(sondage)) {
         _sondagesList.splice(_sondagesList.indexOf(sondage), 1);
         writeSondagesInFiles().catch(() => { });
     }

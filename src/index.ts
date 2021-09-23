@@ -1,6 +1,6 @@
 import Sondage from './Sondage'
 import SondageOption from "./SondageOption"
-import {TextChannel, Message, Client} from "discord.js"
+import {TextChannel, Message, Client, PartialMessage} from "discord.js"
 import * as fs from "fs";
 
 let _sondagesList: Array<Sondage> = []
@@ -23,45 +23,39 @@ async function init(client: Client, pathToSondageSaveFile: string) {
     _client = client
     _pathToSondageSaveFile = pathToSondageSaveFile
 
-    await loadSondagesFromFile().catch((e) => {
+    await loadSondagesFromFile().then(() => {
+        writeSondagesInFiles()
+    }).catch((e) => {
         throw Error(e.message)
     })
 
     client.on('messageReactionAdd', (messageReaction, user) => {
-        if(messageReaction.message instanceof Message) {
-            let sondage = getSondageByMessage(messageReaction.message);
-            if(sondage && !user.bot) {
-                sondage.vote(user.id, messageReaction.emoji.name)
-                sondage.updateMessageAndReact()
-            }
+        let sondage = getSondageByMessage(messageReaction.message);
+        if(sondage && !user.bot) {
+            sondage.vote(user.id, messageReaction.emoji.name)
+            sondage.updateMessageAndReact()
         }
     })
 
     client.on('messageReactionRemove', (messageReaction, user) => {
-        if(messageReaction.message instanceof Message) {
-            let sondage = getSondageByMessage(messageReaction.message);
-            if(sondage && !user.bot) {
-                sondage.unVote(user.id, messageReaction.emoji.name)
-                sondage.updateMessageAndReact()
-            }
+        let sondage = getSondageByMessage(messageReaction.message);
+        if(sondage && !user.bot) {
+            sondage.unVote(user.id, messageReaction.emoji.name)
+            sondage.updateMessageAndReact()
         }
     })
 
     client.on('messageReactionRemoveAll', async (message) => {
-        if(message instanceof Message) {
-            let sondage = getSondageByMessage(message);
-            if(sondage) {
-                await sondage.updateMessageAndReact()
-            }
+        let sondage = getSondageByMessage(message);
+        if(sondage) {
+            await sondage.updateMessageAndReact()
         }
     })
 
     client.on('messageDelete', async (message) => {
-        if(message instanceof Message) {
-            let sondage = getSondageByMessage(message);
-            if(sondage) {
-                await removeSondageInStorage(sondage)
-            }
+        let sondage = getSondageByMessage(message);
+        if(sondage) {
+            await removeSondageInStorage(sondage)
         }
     })
 }
@@ -139,6 +133,7 @@ async function loadSondagesFromFile() {
 async function postSondage(sondage: Sondage, channel: TextChannel): Promise<Message> {
     if(_client) {
         let message = await channel.send({embeds: [sondage.embed]})
+        message = await channel.messages.fetch(message.id)
         _sondagesList.push(sondage)
         sondage.message = message
         await sondage.regenerateReact()
@@ -148,13 +143,13 @@ async function postSondage(sondage: Sondage, channel: TextChannel): Promise<Mess
     } else throw Error("Not initialized")
 }
 
-function getSondageByMessage(message: Message): Sondage {
-    if(_client) return _sondagesList.find(sondage => sondage.message === message)
+function getSondageByMessage(message: Message|PartialMessage): Sondage {
+    if(_client) return _sondagesList.find(sondage => sondage.message.id === message.id)
     else throw Error("Not initialized")
 }
 
 export function removeSondageInStorage(sondage: Sondage) {
-    if(_sondagesList.indexOf(sondage) !== -1) {
+    if(_sondagesList.includes(sondage)) {
         _sondagesList.splice(_sondagesList.indexOf(sondage), 1)
         writeSondagesInFiles().catch(() => {})
     }

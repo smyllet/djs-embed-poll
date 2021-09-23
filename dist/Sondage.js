@@ -185,10 +185,11 @@ class Sondage {
     }
     setTimeout() {
         if (this._message) {
+            let now = new Date();
             clearTimeout(this._expireTimeout);
             this._expireTimeout = setTimeout(() => {
                 this.updateMessageAndReact().catch(() => { });
-            }, this._expireTime);
+            }, this._expireTime - now.getTime());
         }
     }
     set expireTime(expireTime) {
