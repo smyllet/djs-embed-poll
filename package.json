@@ -7,6 +7,9 @@
     "test": "mocha -r ts-node/register ./test/**/*.test.ts",
     "build": "tsc"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "discord.js",
     "djs",
