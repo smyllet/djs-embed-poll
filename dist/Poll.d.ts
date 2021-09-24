@@ -43,4 +43,5 @@ export default class Poll {
     updateVotesAndReacts(): Promise<void>;
     setTimeout(): void;
     set expireTime(expireTime: number);
+    end(): void;
 }

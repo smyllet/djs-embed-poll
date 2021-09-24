@@ -218,4 +218,9 @@ export default class Poll {
         this._expireTime = expireTime
         this.setTimeout()
     }
+
+    end() {
+        let now = new Date()
+        this.expireTime = now.getTime()
+    }
 }
