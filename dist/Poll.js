@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const Utils_1 = require("./Utils");
-const SondageManager = require("./index");
-class Sondage {
+const PollManager = require("./index");
+class Poll {
     constructor(title, description = "", options, expireTime) {
         this._title = title;
         this._description = description;
@@ -116,7 +116,7 @@ class Sondage {
             if (this._message && !this._message.deleted) {
                 if (this.expired) {
                     yield this._message.reactions.removeAll();
-                    SondageManager.removeSondageInStorage(this);
+                    PollManager.removePollInStorage(this);
                 }
                 yield this._message.edit({ embeds: [this.embed] }).catch(() => {
                     throw Error("Can't edit poll message");
@@ -199,4 +199,4 @@ class Sondage {
         this.setTimeout();
     }
 }
-exports.default = Sondage;
+exports.default = Poll;

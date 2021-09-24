@@ -1,21 +1,21 @@
 import { MessageEmbed, Message } from 'discord.js';
-import SondageOption from "./SondageOption";
-export default class Sondage {
+import PollOption from "./PollOption";
+export default class Poll {
     private _title;
     private _description;
     private readonly _options;
     private _expireTime;
     private _expireTimeout;
     private _message;
-    constructor(title: string, description?: string, options?: Array<SondageOption>, expireTime?: number);
+    constructor(title: string, description?: string, options?: Array<PollOption>, expireTime?: number);
     set title(title: string);
     get title(): string;
     set description(description: string);
     get description(): string;
-    addOption(option: SondageOption): void;
-    removeOption(option: SondageOption): void;
-    get options(): Array<SondageOption>;
-    getOptionByEmote(emote: string): SondageOption;
+    addOption(option: PollOption): void;
+    removeOption(option: PollOption): void;
+    get options(): Array<PollOption>;
+    getOptionByEmote(emote: string): PollOption;
     resetAllVotes(): void;
     get reacts(): Array<string>;
     set message(message: Message);

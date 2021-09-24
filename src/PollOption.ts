@@ -1,4 +1,4 @@
-export default class SondageOption {
+export default class PollOption {
     private readonly _emote: string
     private readonly _libelle: string
     private readonly _multiOptions: boolean

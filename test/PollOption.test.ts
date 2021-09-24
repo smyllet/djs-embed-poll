@@ -1,13 +1,13 @@
 const assert = require('assert')
-import SondageOption from '../src/SondageOption'
+import PollOption from '../src/PollOption'
 
-describe('Class SondageOption', () => {
-    let option1: SondageOption
-    let option2: SondageOption
+describe('Class PollOption', () => {
+    let option1: PollOption
+    let option2: PollOption
 
     beforeEach(function(){
-        option1 = new SondageOption(':sob:', 'Choix 1')
-        option2 = new SondageOption(':cry:', 'Choix 2', true)
+        option1 = new PollOption(':sob:', 'Choix 1')
+        option2 = new PollOption(':cry:', 'Choix 2', true)
 
         option2.addVote("001")
         option2.addVote("002")

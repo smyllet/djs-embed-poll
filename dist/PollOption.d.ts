@@ -1,4 +1,4 @@
-export default class SondageOption {
+export default class PollOption {
     private readonly _emote;
     private readonly _libelle;
     private readonly _multiOptions;

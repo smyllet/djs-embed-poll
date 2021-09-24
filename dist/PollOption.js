@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class SondageOption {
+class PollOption {
     constructor(emote, libelle, multiOption = false) {
         this._emote = emote;
         this._libelle = libelle;
@@ -41,4 +41,4 @@ class SondageOption {
         };
     }
 }
-exports.default = SondageOption;
+exports.default = PollOption;

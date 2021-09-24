@@ -1,17 +1,17 @@
 import {MessageEmbed, Message, MessageReaction, User} from 'discord.js'
-import SondageOption from "./SondageOption";
+import PollOption from "./PollOption";
 import Utils from "./Utils";
-import * as SondageManager from "./index"
+import * as PollManager from "./index"
 
-export default class Sondage {
+export default class Poll {
     private _title: string
     private _description: string
-    private readonly _options: Array<SondageOption>
+    private readonly _options: Array<PollOption>
     private _expireTime: number
     private _expireTimeout: NodeJS.Timeout
     private _message : Message
 
-    constructor(title: string, description = "", options?: Array<SondageOption>, expireTime?: number) {
+    constructor(title: string, description = "", options?: Array<PollOption>, expireTime?: number) {
         this._title = title
         this._description = description
         this._options = (options) ? options : []
@@ -40,19 +40,19 @@ export default class Sondage {
         return this._description
     }
 
-    addOption(option: SondageOption) {
+    addOption(option: PollOption) {
         if(this._options.indexOf(option) === -1) this._options.push(option)
     }
 
-    removeOption(option: SondageOption) {
+    removeOption(option: PollOption) {
         if(this._options.indexOf(option) !== -1) this._options.splice(this._options.indexOf(option), 1)
     }
 
-    get options(): Array<SondageOption> {
+    get options(): Array<PollOption> {
         return this._options;
     }
 
-    getOptionByEmote(emote: string): SondageOption {
+    getOptionByEmote(emote: string): PollOption {
         return this._options.find(option => option.emote === emote)
     }
 
@@ -131,7 +131,7 @@ export default class Sondage {
         if(this._message && !this._message.deleted) {
             if(this.expired) {
                 await this._message.reactions.removeAll()
-                SondageManager.removeSondageInStorage(this)
+                PollManager.removePollInStorage(this)
             }
             await this._message.edit({embeds: [this.embed]}).catch(() => {
                 throw Error("Can't edit poll message")

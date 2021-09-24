@@ -9,16 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SondageOption = exports.Sondage = exports.removeSondageInStorage = exports.getSondageByMessage = exports.postSondage = exports.loadSondagesFromFile = exports.writeSondagesInFiles = exports.init = void 0;
-const Sondage_1 = require("./Sondage");
-exports.Sondage = Sondage_1.default;
-const SondageOption_1 = require("./SondageOption");
-exports.SondageOption = SondageOption_1.default;
+exports.PollOption = exports.Poll = exports.removePollInStorage = exports.getPollByMessage = exports.postPoll = exports.loadPollsFromFile = exports.writePollsInFiles = exports.init = void 0;
+const Poll_1 = require("./Poll");
+exports.Poll = Poll_1.default;
+const PollOption_1 = require("./PollOption");
+exports.PollOption = PollOption_1.default;
 const fs = require("fs");
-let _sondagesList = [];
+let _pollsList = [];
 let _client;
-let _pathToSondageSaveFile;
-function init(client, pathToSondageSaveFile) {
+let _pathToPollsSaveFile;
+function init(client, pathToPollsSaveFile) {
     return __awaiter(this, void 0, void 0, function* () {
         yield new Promise((resolve, reject) => {
             if (client.isReady())
@@ -32,95 +32,95 @@ function init(client, pathToSondageSaveFile) {
             throw Error("Error during initialization");
         });
         _client = client;
-        _pathToSondageSaveFile = pathToSondageSaveFile;
-        yield loadSondagesFromFile().then(() => {
-            writeSondagesInFiles();
+        _pathToPollsSaveFile = pathToPollsSaveFile;
+        yield loadPollsFromFile().then(() => {
+            writePollsInFiles();
         }).catch((e) => {
             throw Error(e.message);
         });
         client.on('messageReactionAdd', (messageReaction, user) => {
-            let sondage = getSondageByMessage(messageReaction.message);
-            if (sondage && !user.bot) {
-                sondage.vote(user.id, messageReaction.emoji.name);
-                sondage.updateMessageAndReact();
+            let poll = getPollByMessage(messageReaction.message);
+            if (poll && !user.bot) {
+                poll.vote(user.id, messageReaction.emoji.name);
+                poll.updateMessageAndReact();
             }
         });
         client.on('messageReactionRemove', (messageReaction, user) => {
-            let sondage = getSondageByMessage(messageReaction.message);
-            if (sondage && !user.bot) {
-                sondage.unVote(user.id, messageReaction.emoji.name);
-                sondage.updateMessageAndReact();
+            let poll = getPollByMessage(messageReaction.message);
+            if (poll && !user.bot) {
+                poll.unVote(user.id, messageReaction.emoji.name);
+                poll.updateMessageAndReact();
             }
         });
         client.on('messageReactionRemoveAll', (message) => __awaiter(this, void 0, void 0, function* () {
-            let sondage = getSondageByMessage(message);
-            if (sondage) {
-                yield sondage.updateMessageAndReact();
+            let poll = getPollByMessage(message);
+            if (poll) {
+                yield poll.updateMessageAndReact();
             }
         }));
         client.on('messageDelete', (message) => __awaiter(this, void 0, void 0, function* () {
-            let sondage = getSondageByMessage(message);
-            if (sondage) {
-                yield removeSondageInStorage(sondage);
+            let poll = getPollByMessage(message);
+            if (poll) {
+                yield removePollInStorage(poll);
             }
         }));
     });
 }
 exports.init = init;
-function writeSondagesInFiles() {
+function writePollsInFiles() {
     return __awaiter(this, void 0, void 0, function* () {
         let data = {
-            sondageList: _sondagesList.map(sondage => sondage.toJson())
+            pollsList: _pollsList.map(poll => poll.toJson())
         };
         try {
-            fs.writeFileSync(_pathToSondageSaveFile, JSON.stringify(data, null, "\t"));
+            fs.writeFileSync(_pathToPollsSaveFile, JSON.stringify(data, null, "\t"));
         }
         catch (e) {
-            throw Error("Error during saving sondages");
+            throw Error("Error during saving polls");
         }
     });
 }
-exports.writeSondagesInFiles = writeSondagesInFiles;
-function loadSondagesFromFile() {
+exports.writePollsInFiles = writePollsInFiles;
+function loadPollsFromFile() {
     return __awaiter(this, void 0, void 0, function* () {
-        _sondagesList = [];
-        if (fs.existsSync(_pathToSondageSaveFile)) {
-            let sondageFile;
+        _pollsList = [];
+        if (fs.existsSync(_pathToPollsSaveFile)) {
+            let pollsFile;
             try {
-                sondageFile = fs.readFileSync(_pathToSondageSaveFile, 'utf-8');
+                pollsFile = fs.readFileSync(_pathToPollsSaveFile, 'utf-8');
             }
             catch (e) {
                 throw Error("Error while loading polls");
             }
-            if (sondageFile) {
-                let sondagesJson = JSON.parse(sondageFile);
-                if (sondagesJson.sondageList && sondagesJson.sondageList instanceof Array) {
-                    yield Promise.all(sondagesJson.sondageList.map((jsonSondage) => __awaiter(this, void 0, void 0, function* () {
-                        if (jsonSondage.title && jsonSondage.title.length > 0 &&
-                            jsonSondage.description &&
-                            jsonSondage.expireTime) {
-                            let sondagesOptionsList = [];
-                            if (jsonSondage.options && jsonSondage.options instanceof Array && jsonSondage.options.length >= 2) {
-                                jsonSondage.options.forEach(jsonSondageOption => {
-                                    if (jsonSondageOption.emote &&
-                                        jsonSondageOption.libelle && jsonSondageOption.libelle.length > 0 &&
-                                        jsonSondageOption.hasOwnProperty("multiOptions") && typeof jsonSondageOption.multiOptions == "boolean") {
-                                        sondagesOptionsList.push(new SondageOption_1.default(jsonSondageOption.emote, jsonSondageOption.libelle, jsonSondageOption.multiOptions));
+            if (pollsFile) {
+                let pollsJson = JSON.parse(pollsFile);
+                if (pollsJson.pollsList && pollsJson.pollsList instanceof Array) {
+                    yield Promise.all(pollsJson.pollsList.map((jsonPolls) => __awaiter(this, void 0, void 0, function* () {
+                        if (jsonPolls.title && jsonPolls.title.length > 0 &&
+                            jsonPolls.description &&
+                            jsonPolls.expireTime) {
+                            let pollsOptionsList = [];
+                            if (jsonPolls.options && jsonPolls.options instanceof Array && jsonPolls.options.length >= 2) {
+                                jsonPolls.options.forEach(jsonPollOption => {
+                                    if (jsonPollOption.emote &&
+                                        jsonPollOption.libelle && jsonPollOption.libelle.length > 0 &&
+                                        jsonPollOption.hasOwnProperty("multiOptions") && typeof jsonPollOption.multiOptions == "boolean") {
+                                        pollsOptionsList.push(new PollOption_1.default(jsonPollOption.emote, jsonPollOption.libelle, jsonPollOption.multiOptions));
                                     }
                                 });
-                                if (sondagesOptionsList.length >= 2) {
-                                    let guild = yield _client.guilds.fetch(jsonSondage.guildId).catch(() => { });
+                                if (pollsOptionsList.length >= 2) {
+                                    let guild = yield _client.guilds.fetch(jsonPolls.guildId).catch(() => { });
                                     if (guild) {
-                                        let channel = yield guild.channels.fetch(jsonSondage.channelId).catch(() => { });
+                                        let channel = yield guild.channels.fetch(jsonPolls.channelId).catch(() => { });
                                         if (channel && channel.isText()) {
-                                            let message = yield channel.messages.fetch(jsonSondage.messageId).catch(() => { });
+                                            let message = yield channel.messages.fetch(jsonPolls.messageId).catch(() => { });
                                             if (message && message.author === _client.user) {
-                                                let sondage = new Sondage_1.default(jsonSondage.title, jsonSondage.description, sondagesOptionsList, jsonSondage.expireTime);
-                                                sondage.message = message;
-                                                _sondagesList.push(sondage);
-                                                yield sondage.updateVotesAndReacts();
-                                                sondage.setTimeout();
-                                                yield sondage.updateMessageAndReact();
+                                                let poll = new Poll_1.default(jsonPolls.title, jsonPolls.description, pollsOptionsList, jsonPolls.expireTime);
+                                                poll.message = message;
+                                                _pollsList.push(poll);
+                                                yield poll.updateVotesAndReacts();
+                                                poll.setTimeout();
+                                                yield poll.updateMessageAndReact();
                                             }
                                         }
                                     }
@@ -133,42 +133,42 @@ function loadSondagesFromFile() {
         }
     });
 }
-exports.loadSondagesFromFile = loadSondagesFromFile;
-function postSondage(sondage, channel) {
+exports.loadPollsFromFile = loadPollsFromFile;
+function postPoll(poll, channel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (_client) {
-            let message = yield channel.send({ embeds: [sondage.embed] });
+            let message = yield channel.send({ embeds: [poll.embed] });
             message = yield channel.messages.fetch(message.id);
-            _sondagesList.push(sondage);
-            sondage.message = message;
-            yield sondage.regenerateReact();
-            sondage.setTimeout();
-            yield writeSondagesInFiles();
+            _pollsList.push(poll);
+            poll.message = message;
+            yield poll.regenerateReact();
+            poll.setTimeout();
+            yield writePollsInFiles();
             return message;
         }
         else
             throw Error("Not initialized");
     });
 }
-exports.postSondage = postSondage;
-function getSondageByMessage(message) {
+exports.postPoll = postPoll;
+function getPollByMessage(message) {
     if (_client)
-        return _sondagesList.find(sondage => sondage.message.id === message.id);
+        return _pollsList.find(poll => poll.message.id === message.id);
     else
         throw Error("Not initialized");
 }
-exports.getSondageByMessage = getSondageByMessage;
-function removeSondageInStorage(sondage) {
-    if (_sondagesList.includes(sondage)) {
-        _sondagesList.splice(_sondagesList.indexOf(sondage), 1);
-        writeSondagesInFiles().catch(() => { });
+exports.getPollByMessage = getPollByMessage;
+function removePollInStorage(poll) {
+    if (_pollsList.includes(poll)) {
+        _pollsList.splice(_pollsList.indexOf(poll), 1);
+        writePollsInFiles().catch(() => { });
     }
 }
-exports.removeSondageInStorage = removeSondageInStorage;
+exports.removePollInStorage = removePollInStorage;
 module.exports = {
-    Sondage: Sondage_1.default,
-    SondageOption: SondageOption_1.default,
-    postSondage: postSondage,
-    getSondageByMessage: getSondageByMessage,
+    Poll: Poll_1.default,
+    PollOption: PollOption_1.default,
+    postPoll: postPoll,
+    getPollByMessage: getPollByMessage,
     init: init
 };
